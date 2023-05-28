@@ -1,0 +1,47 @@
+{
+  "expo": {
+    "name": "health",
+    "slug": "health",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./src/image/Heart.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./src/image/Heart.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#171717"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "web": {
+      "favicon": "./src/image/Heart.png"
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "9c50c848-1193-4b54-9a64-e396f83bc55e"
+      }
+    }
+  }
+}
