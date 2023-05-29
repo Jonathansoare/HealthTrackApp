@@ -109,9 +109,8 @@ function formatDate() {
     .then((res) => {
       let lista = res.data.result;
       lista.sort((a,b) => b.id - a.id)
-      //console.log(lista[0].peso); pega o ultimo peso adicionado na tabala
+      //console.log(lista[0].imc); pega o ultimo imc adicionado na tabala
       setListImc(lista)
-      console.log(res.data);
       console.log("LOG IMC: imc pego com sucesso.");
     }).catch((e) => {
       console.error("Erro:" + e)
@@ -147,7 +146,7 @@ function formatDate() {
 
       <View style={styles.containerHistory}>
         <Text style={styles.textHistory}>Historico</Text>
-        <FlatList data={listImc} renderItem={({item}) => <TextHistory icon="calculator" peso={item.imc} date={item.data_age} textSecund="Imc"></TextHistory>} 
+        <FlatList data={listImc} renderItem={({item}) => <TextHistory colorIcon="#afb42b" icon="calculator" peso={item.imc} date={item.data_age} textSecund=" IMC"></TextHistory>} 
         refreshControl={
           <RefreshControl 
           refreshing={refresh}

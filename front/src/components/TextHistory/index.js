@@ -17,6 +17,7 @@ export default function TextHistory(props) {
         Roboto_100Thin_Italic,
         Roboto_100Thin,
         Roboto_300Light
+        
       }) 
       if(!fontsLoaded) return null;
  return (
@@ -24,7 +25,7 @@ export default function TextHistory(props) {
 
     <View style={styles.containerPeso}>
         <View style={styles.icons}>
-            <Ionicons name={props.icon} color="#6e8efb" size={30}/>
+            <Ionicons name={props.icon} color={props.colorIcon} size={30}/>
         </View>
 
         <Text style={styles.TextPeso}>{props.peso}<Text style={styles.TextPesoSecund}>{props.textSecund}</Text></Text>

@@ -130,7 +130,7 @@ export default function Pressao() {
 
       <View style={styles.containerHistory}>
       <Text style={styles.textHistory}>Historico</Text>
-      <FlatList data={listPressao} renderItem={({item}) => <TextHistory icon="heart" peso={item.pressao} date={item.data_age} textSecund="MMC"></TextHistory>} 
+      <FlatList data={listPressao} renderItem={({item}) => <TextHistory colorIcon="#ef5350" icon="heart" peso={item.pressao} date={item.data_age} textSecund="MMC"></TextHistory>} 
       refreshControl={
         <RefreshControl 
         refreshing={refresh}

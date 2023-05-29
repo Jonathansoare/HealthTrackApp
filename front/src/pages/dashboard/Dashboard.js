@@ -25,6 +25,8 @@ export default function Dashboard(){
   const [porcePeso,setPorcePeso] = useState()
   const [pressao,setPressao] = useState()
   const [porcePressao,setPorcePressao] = useState()
+  const [imc,setImc] = useState()
+  const [indiceImc,setIndiceImc] = useState()
   const [isLoading,setISLoading] = useState(false)
   const [refresh,setRefresh] = useState()
   const [fontsLoaded] = useFonts({
@@ -110,15 +112,40 @@ export default function Dashboard(){
       console.error("Erro:" + e)
     })
 
+  } 
+
+  async function buscarImc(id){
+    const dados = await axios.get(`${Api}/search/imc/${id}`)
+    .then((res) => {
+      let lista = res.data.result;
+      lista.sort((a,b) => b.id - a.id)
+      //console.log(lista[0].imc); pega o ultimo imc adicionado na tabala
+      if(lista[0] === undefined){
+        setImc(0)
+        setIndiceImc('')
+      }
+      else{
+        setImc(lista[0].imc)
+        setIndiceImc(lista[0].categoria)
+      }
+      console.log("LOG IMC: imc pego com sucesso.");
+    }).catch((e) => {
+      console.error("Erro:" + e)
+    })
+  };
+
+  function buscarInfo(id){
+    buscarPeso(id)
+    buscarPressao(id)
+    porcetagemPeso(id)
+    porcetagemPressao(id)
+    buscarImc(id)
   }
 
   function Refresh(){
     setRefresh(true)
     setISLoading(true)
-    buscarPeso(id)
-    porcetagemPeso(id)
-    buscarPressao(id)
-    porcetagemPressao(id)
+    buscarInfo(id)
     setTimeout(() => {
       setISLoading(false)
       setRefresh(false)
@@ -128,14 +155,12 @@ export default function Dashboard(){
   useEffect(() => {
     AsyncStorage.getItem('idUser').then((res) => setId(res));
     setISLoading(true)
-    buscarPeso(id)
-    porcetagemPeso(id)
-    buscarPressao(id)
-    porcetagemPressao(id)
+    buscarInfo(id)
     setTimeout(() => {
       setISLoading(false)
+      buscarInfo(id)
     }, 2000);
-  },[id]);
+  },[id,peso,pressao,imc]);
 
     return (
       <>
@@ -184,15 +209,14 @@ export default function Dashboard(){
 
             <CardInfo 
               title="Imc" 
-              value="24.3" 
+              value={imc === 0 ? "Sem imc" : imc}
               StyleIcon={stylesImc.icons}
               iconNameTitle={"calculator"}
               iconSizeTitle={30}
               iconColorTitle={"#afb42b"}
-              iconNamePocentagem={"up"}
               iconSizePocentagem={26}
-              iconColorPocentagem={'green'}
-              pocentagem={"3%"}/>
+              colorPocentagem={imc === 0 ? "white" : imc < 15 ? "red" : imc < 18.5 ? "yellow" : imc < 25 ? "green" : imc < 30 ? "yellow" : imc < 35 ? "yellow" : "red"}
+              pocentagem={imc === 0 ? " " : indiceImc}/>
               
             <CardInfo 
               title="Atividade" 

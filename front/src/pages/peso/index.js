@@ -135,7 +135,7 @@ function Refresh(){
 
     <View style={styles.containerHistory}>
       <Text style={styles.textHistory}>Historico</Text>
-      <FlatList data={listPeso} renderItem={({item}) => <TextHistory peso={item.peso} icon="barbell" date={item.data_age} textSecund="Kg"></TextHistory>} 
+      <FlatList data={listPeso} renderItem={({item}) => <TextHistory colorIcon="#6e8efb" peso={item.peso} icon="barbell" date={item.data_age} textSecund="Kg"></TextHistory>} 
       refreshControl={
         <RefreshControl 
         refreshing={refresh}

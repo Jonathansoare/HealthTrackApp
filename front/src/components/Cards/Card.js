@@ -34,7 +34,7 @@ export default function CardInfo(props) {
 
         <View style={stylesPressao.porcetagem}>
         <AntDesign name={props.iconNamePocentagem} size={props.iconSizePocentagem} color={props.iconColorPocentagem} />
-        <Text style={{fontSize:24,left:2,color:props.colorPocentagem}}>{props.pocentagem}</Text>
+        <Text style={{fontSize:21,left:2,color:props.colorPocentagem}}>{props.pocentagem}</Text>
         </View>
     </TouchableOpacity>
     
