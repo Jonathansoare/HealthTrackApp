@@ -134,12 +134,12 @@ export default function Dashboard(){
     })
   };
 
-  function buscarInfo(id){
-    buscarPeso(id)
-    buscarPressao(id)
-    porcetagemPeso(id)
-    porcetagemPressao(id)
-    buscarImc(id)
+  async function buscarInfo(id){
+    await buscarPeso(id)
+    await buscarPressao(id)
+    await porcetagemPeso(id)
+    await porcetagemPressao(id)
+    await buscarImc(id)
   }
 
   function Refresh(){
@@ -158,13 +158,12 @@ export default function Dashboard(){
     buscarInfo(id)
     setTimeout(() => {
       setISLoading(false)
-      buscarInfo(id)
-    }, 2000);
-  },[id,peso,pressao,imc]);
+    }, 2500);
+  },[id]);
 
     return (
       <>
-      <Spinner visible={isLoading}/>
+      <Spinner visible={isLoading} size={50} textContent='Carregando...' color='white' textStyle={{color:"white"}}/>
       <SafeAreaView style={styles.main}>
       <Header nameIcon="user" navigate="user"/>
           <TitleMain name="Dashboard"/>
