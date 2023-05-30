@@ -1,5 +1,5 @@
 import React,{useEffect, useState} from 'react';
-import { View,Text, SafeAreaView,StyleSheet,ScrollView,TouchableOpacity,Image } from 'react-native';
+import { View,Text, SafeAreaView,StyleSheet,ScrollView,TouchableOpacity,Image,TextInput } from 'react-native';
 import Header from '../../components/Header/Header';
 import TitleMain from '../../components/TitleMain';
 import { AntDesign } from '@expo/vector-icons';
@@ -9,7 +9,6 @@ import Heart from "../../image/Heart.png"
 import axios from 'axios';
 import api from "../../assets/api/index"
 
-import FakeInput from '../../components/FakeInput';
 import { useNavigation } from "@react-navigation/native";
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -20,13 +19,13 @@ import Spinner from 'react-native-loading-spinner-overlay/lib';
 export default function Perfil() {
   AsyncStorage.getItem('idUser').then((res) => setId(res));
   const navigation = useNavigation()
-  const [name,setName] = useState()
-  const [height,setHeight] = useState()
-  const [email,setEmail] = useState()
-  const [password,setPassword] = useState('90351222')
+  const [name,setName] = useState('jonathan soares')
+  const [height,setHeight] = useState('1.69')
+  const [email,setEmail] = useState('jonathan@gmail.com')
   const [image, setImage] = useState(null);
   const [id,setId] = useState();
   const [isLoading,setISLoading] = useState(false)
+  const [editable,setEditable] = useState(false)
 
   const handleImagePicker = async () => {
     AsyncStorage.getItem('idUser').then((res) => setId(res));
@@ -52,12 +51,6 @@ export default function Perfil() {
       
     }
   }
-  // funcionar a camera
-  // <Camera 
-  // style={{flex:1}}
-  // type={Camera.Constants.Type.front}
-  // />
-
   async function buscarImg(id){
     const dados = await axios.get(`${api}/search/img/${id}`)
     .then((res) => {
@@ -74,6 +67,7 @@ export default function Perfil() {
     AsyncStorage.getItem('idUser').then((res) => setId(res));
     setISLoading(true)
     buscarImg(id)
+    console.log(name);
     setTimeout(() => {
       setISLoading(false)
     }, 2000);
@@ -94,22 +88,70 @@ export default function Perfil() {
         <AntDesign name={"home"} size={24} color="white" />
         </TouchableOpacity>
       </SafeAreaView>
-    {/* ---------------------------------- */}
+    {/* --------------------------------- */}
 
-    <ScrollView style={styles.main} horizontal={false} showsHorizontalScrollIndicator={false}>
-      <TitleMain name="Perfil"/>
-
+    <View style={styles.containerInfo}>
+     {/* FOTO DE PERFIL  */}
       <View style={styles.containerImgUser}>
-        <TouchableOpacity onPress={() => handleImagePicker()}>
-        {!image ? <AntDesign name="adduser" size={60} color="white" /> : <Image source={{uri:image}} style={styles.imgUser}/>}
-        </TouchableOpacity>
+          <TouchableOpacity onPress={() => handleImagePicker()}>
+          {!image ? <AntDesign name="adduser" size={60} color="white" /> : <Image source={{uri:image}} style={styles.imgUser}/>}
+          </TouchableOpacity>
       </View>
-
-      <FakeInput nameTitle={"Nome"} defaultValue={name} onChangeText={setName}/>
-      <FakeInput nameTitle={"Altura"} defaultValue={height} onChangeText={setHeight} keyboardType={"number-pad"}/>
-      <FakeInput nameTitle={"Email"} defaultValue={email} onChangeText={setEmail}/>
-    </ScrollView>
+     {/* -------------------------- */}
     
+    {/* BUTAO DE EDITAR PERFIL */}
+    <TouchableOpacity style={styles.buttomEdit} onPress={() => {if(editable === false){ setEditable(true)} else{setEditable(false)}}}>
+      <Text style={styles.textButtomEdit}>Editar perfil</Text>
+    </TouchableOpacity>
+    {/* ---------------- */}
+    
+    {/* CONTAINER FORM */}
+    <View style={styles.containerForm}>
+      {/* INPUT NOME */}
+      <View style={styles.containerInput}>
+        <Text style={styles.labelInput}>Nome</Text>
+        <TextInput style={styles.input} onChangeText={setName} value={name} editable={editable}/>
+      </View>
+      {/* --------------- */}
+
+      {/* INPUT EMAIL */}
+      <View style={styles.containerInput}>
+        <Text style={styles.labelInput}>Email</Text>
+        <TextInput style={styles.input} keyboardType='email-address' onChangeText={setEmail} value={email}  editable={editable}/>
+      </View>
+      {/* -------------- */}
+
+      {/* INPUT AlTURA */}
+      <View style={styles.containerInput}>
+        <Text style={styles.labelInput}>Altura</Text>
+        <TextInput style={styles.input} keyboardType='number-pad' onChangeText={setHeight} value={height} editable={editable}/>
+      </View>
+      {/* -------------- */}
+
+    </View>
+    {/* ---------------------------- */}
+
+
+    {/*  BOTAO DE SALVA*/}
+    <TouchableOpacity
+      style={editable === true ? styles.buttonCalculator : {
+        borderRadius: 50,
+        alignItems: "center",
+        justifyContent: "center",
+        width: "90%",
+        backgroundColor: "#FF0043",
+        paddingTop: 14,
+        paddingBottom: 14,
+        marginLeft: 12,
+        marginTop: 25,
+        opacity:0.5
+     }}
+      onPress={() => {console.log("salvou"), setEditable(false)}} 
+      disabled={!editable}>
+      <Text style={styles.textButtonCalculator}>Salvar</Text>
+    </TouchableOpacity>
+    {/* ------------------ */}
+    </View>
    </SafeAreaView>
    </>
   );
@@ -120,13 +162,22 @@ const styles = StyleSheet.create({
     flex:1,
     backgroundColor:"#141414",
   },
+  containerInfo:{
+    flex:1,
+    marginTop:100,
+    backgroundColor: "#202020",
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    alignItems: "center",
+    paddingTop:20,
+  },
   containerImgUser:{
     backgroundColor:"#181818",
     width:150,
     height:150,
     justifyContent:"center",
     alignSelf:"center",
-    marginTop:30,
+    marginTop:-50,
     alignItems:"center",
     borderRadius:100,
   },
@@ -187,5 +238,52 @@ containerUserHeader:{
   alignItems:"center",
   justifyContent:"center",
   borderRadius:60
+},
+buttomEdit:{
+  marginTop:10,
+  backgroundColor:'#121212',
+  padding:15,
+  borderRadius:20,
+},
+textButtomEdit:{
+  color:"white",
+  fontSize:16,
+},
+input:{
+  width: "90%",
+  borderRadius: 50,
+  backgroundColor: "#121212",
+  height: 50,
+  paddingLeft:10,
+ alignSelf:"center",
+ color:"white",
+ fontSize:18,
+ marginTop:10
+},
+labelInput:{
+  paddingLeft:30,
+  color:"white",
+  fontSize:20,
+},
+containerForm:{
+  width:"100%",
+},
+containerInput:{
+  marginTop:30
+},
+buttonCalculator: {
+  borderRadius: 50,
+  alignItems: "center",
+  justifyContent: "center",
+  width: "90%",
+  backgroundColor: "#FF0043",
+  paddingTop: 14,
+  paddingBottom: 14,
+  marginLeft: 12,
+  marginTop: 50,
+},
+textButtonCalculator: {
+  fontSize: 20,
+  color: "#ffffff",
 },
 })
