@@ -15,6 +15,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import * as ImagePicker from 'expo-image-picker';
 import Spinner from 'react-native-loading-spinner-overlay/lib';
+import { set } from 'react-hook-form';
 
 export default function Perfil() {
   AsyncStorage.getItem('UserId').then((res) => setId(res))
@@ -56,34 +57,30 @@ export default function Perfil() {
   async function buscarImg(id){
     const dados = await axios.get(`${api}/search/img/${id}`)
     .then((res) => {
-      setISLoading(true)
-      setImage(res.data.result[0].img)
-      setISLoading(false)
+        setImage(res.data.result[0].img)
     })
     .catch((erro) => {
       console.log(erro);
     })
   }
 
-  async function buscarUser(id){
-    const dados = await axios.get(`${api}/search/${id}`, {headers:{ Authorization: `Bearer ${token}`,}})
+  async function buscarUser(id,token){
+    const dados = await axios.get(`${api}/search/${id}`, {
+      headers:{ Authorization: `Bearer ${token}`,}
+    })
     .then((res) => {
-      const nome = res.data.result[0].name
-      const email = res.data.result[0].email
-      const altura = res.data.result[0].altura
-      setEmail(email)
-      setName(nome)
-      setHeight(altura)
+      setName(res.data.result[0].name)
+      setEmail(res.data.result[0].email)
+      setHeight(res.data.result[0].altura)
     }).catch((e) => {
       console.error("Erro:" + e)
     })
   }
 
   useEffect(() => {
-    AsyncStorage.getItem('UserId').then((res) => setId(res))
     setISLoading(true)
     buscarImg(id)
-    buscarUser(id)
+    buscarUser(id,token)
     setTimeout(() => {
       setISLoading(false)
     }, 2000);
@@ -110,7 +107,7 @@ export default function Perfil() {
     <View style={styles.containerInfo}>
      {/* FOTO DE PERFIL  */}
       <View style={styles.containerImgUser}>
-          <TouchableOpacity onPress={() => handleImagePicker()}>
+          <TouchableOpacity onPress={() => handleImagePicker()} disabled={!editable}>
           {!image ? <AntDesign name="adduser" size={60} color="white" /> : <Image source={{uri:image}} style={styles.imgUser}/>}
           </TouchableOpacity>
       </View>
@@ -160,7 +157,7 @@ export default function Perfil() {
         paddingTop: 14,
         paddingBottom: 14,
         marginLeft: 12,
-        marginTop: 25,
+        marginTop: 50,
         opacity:0.5
      }}
       onPress={() => {console.log("salvou"), setEditable(false)}} 

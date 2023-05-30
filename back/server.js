@@ -26,7 +26,7 @@ const db = mysql.createPool({
 
 app.get('/', eAdmin, async (req,res) => {
     await User.findAll({
-        attributes:['id','name','email'],
+        attributes:['id','name','email',],
         order:[['id','DESC']],
     }).then((users) =>{
         return res.json({
@@ -107,7 +107,7 @@ app.post('/login', async (req,res) =>{
 app.get('/search/:id', eAdmin, async (req,res) => {
     const id = req.params
     const user =  await User.findAll({
-        attributes:["name","email","id","altura","password"],
+        attributes:["name","email","id","altura","password","img"],
         where:{
             id:id.id
         }
