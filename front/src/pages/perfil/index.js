@@ -17,11 +17,13 @@ import * as ImagePicker from 'expo-image-picker';
 import Spinner from 'react-native-loading-spinner-overlay/lib';
 
 export default function Perfil() {
-  AsyncStorage.getItem('idUser').then((res) => setId(res));
+  AsyncStorage.getItem('UserId').then((res) => setId(res))
+  AsyncStorage.getItem("UserToken").then((res) => setToken(res))
   const navigation = useNavigation()
-  const [name,setName] = useState('jonathan soares')
-  const [height,setHeight] = useState('1.69')
-  const [email,setEmail] = useState('jonathan@gmail.com')
+  const [token, setToken] = useState()
+  const [name,setName] = useState()
+  const [height,setHeight] = useState()
+  const [email,setEmail] = useState()
   const [image, setImage] = useState(null);
   const [id,setId] = useState();
   const [isLoading,setISLoading] = useState(false)
@@ -63,15 +65,30 @@ export default function Perfil() {
     })
   }
 
+  async function buscarUser(id){
+    const dados = await axios.get(`${api}/search/${id}`, {headers:{ Authorization: `Bearer ${token}`,}})
+    .then((res) => {
+      const nome = res.data.result[0].name
+      const email = res.data.result[0].email
+      const altura = res.data.result[0].altura
+      setEmail(email)
+      setName(nome)
+      setHeight(altura)
+    }).catch((e) => {
+      console.error("Erro:" + e)
+    })
+  }
+
   useEffect(() => {
-    AsyncStorage.getItem('idUser').then((res) => setId(res));
+    AsyncStorage.getItem('UserId').then((res) => setId(res))
     setISLoading(true)
     buscarImg(id)
-    console.log(name);
+    buscarUser(id)
     setTimeout(() => {
       setISLoading(false)
     }, 2000);
   },[id]);
+
 
  return (
    <>

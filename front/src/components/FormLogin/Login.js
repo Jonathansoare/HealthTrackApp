@@ -55,7 +55,9 @@ export default function FormLogin(){
         .then((res) => {
             if(res.data.erro === false){
                 const id = String(res.data.id)
-                AsyncStorage.setItem("idUser",id)
+                const token = res.data.token
+                AsyncStorage.setItem("UserId",id)
+                AsyncStorage.setItem("UserToken",res.data.token)
                 navigation.navigate("TabBarRoute")
                 setIsLoading(false)
                 setError(null)

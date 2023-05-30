@@ -167,7 +167,6 @@ export default function Dashboard(){
       <SafeAreaView style={styles.main}>
       <Header nameIcon="user" navigate="user"/>
           <TitleMain name="Dashboard"/>
-          {user && <Text style={styles.text}>{user?.name}</Text>}
           <ScrollView 
             style={styles.main}
             horizontal={false} 
