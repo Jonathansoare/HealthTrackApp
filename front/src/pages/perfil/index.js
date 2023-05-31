@@ -1,5 +1,5 @@
 import React,{useEffect, useState} from 'react';
-import { View,Text, SafeAreaView,StyleSheet,ScrollView,TouchableOpacity,Image,TextInput,RefreshControl } from 'react-native';
+import { View,Text, SafeAreaView,StyleSheet,ScrollView,TouchableOpacity,Image,TextInput,RefreshControl, FlatList } from 'react-native';
 
 import { AntDesign } from '@expo/vector-icons';
 
@@ -118,11 +118,11 @@ export default function Perfil() {
     <View style={styles.containerInfo}>
      {/* FOTO DE PERFIL  */}
       <View style={styles.containerImgUser}>
-        <TouchableOpacity disabled={true}>
+        <TouchableOpacity onPress={() => {!image ? handleImagePicker() : true }} disabled={!editable}>
           {!image ? <AntDesign name="adduser" size={60} color="white" /> : <Image source={{ uri: image }} style={styles.imgUser}/>}
 
-          <TouchableOpacity style={!editable ? {display:"none"} : styles.containerButtomEditImg} onPress={() => handleImagePicker()} disabled={!editable}>
-            <MaterialIcons name="edit" size={20} color="white" /><Text style={styles.textButtomEditImg}>Edit</Text>
+          <TouchableOpacity style={!editable ? {display:"none"}: styles.containerButtomEditImg && !image ? {display:"none"} : styles.containerButtomEditImg} onPress={() => handleImagePicker()} disabled={!editable}>
+            <MaterialIcons name="edit" size={22} color="white" /><Text style={styles.textButtomEditImg}>Edit</Text>
           </TouchableOpacity>
         </TouchableOpacity>
 
@@ -207,9 +207,11 @@ const styles = StyleSheet.create({
     width:150,
     height:150,
     justifyContent:"center",
-    marginTop:-50,
+    marginTop:-80,
     borderRadius:100,
-    flexDirection:"row"
+    flexDirection:"row",
+    alignItems:"center",
+    position:"relative"
   },
   containerUserName:{
     backgroundColor:"#161616",
@@ -328,8 +330,8 @@ containerButtomEditImg:{
   justifyContent:"center",
   width:70,
   height:30,
-  marginLeft:-150,
-  marginTop:-50,
+  marginLeft:-130,
+  marginTop:-30,
   flexDirection:"row",
   alignItems:"center",
   display:"flex"
