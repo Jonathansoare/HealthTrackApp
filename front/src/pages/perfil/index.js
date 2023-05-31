@@ -15,6 +15,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import Spinner from 'react-native-loading-spinner-overlay/lib';
 
+import { MaterialIcons } from '@expo/vector-icons';
+
 export default function Perfil() {
   AsyncStorage.getItem('UserId').then((res) => setId(res))
   AsyncStorage.getItem("UserToken").then((res) => setToken(res))
@@ -116,14 +118,20 @@ export default function Perfil() {
     <View style={styles.containerInfo}>
      {/* FOTO DE PERFIL  */}
       <View style={styles.containerImgUser}>
-          <TouchableOpacity onPress={() => handleImagePicker()} disabled={!editable}>
+        <TouchableOpacity disabled={true}>
           {!image ? <AntDesign name="adduser" size={60} color="white" /> : <Image source={{ uri: image }} style={styles.imgUser}/>}
+
+          <TouchableOpacity style={!editable ? {display:"none"} : styles.containerButtomEditImg} onPress={() => handleImagePicker()} disabled={!editable}>
+            <MaterialIcons name="edit" size={20} color="white" /><Text style={styles.textButtomEditImg}>Edit</Text>
           </TouchableOpacity>
+        </TouchableOpacity>
+
+        
       </View>
      {/* -------------------------- */}
 
     {/* BUTAO DE EDITAR PERFIL */}
-    <TouchableOpacity style={styles.buttomEdit} onPress={() => {if(editable === false){ setEditable(true)} else{setEditable(false)}}}>
+    <TouchableOpacity style={styles.buttomEdit} onPress={() => {if(editable === false){ setEditable(true)} else{setEditable(false)}}} disabled={editable}>
       <Text style={styles.textButtomEdit}>Editar perfil</Text>
     </TouchableOpacity>
     {/* ---------------- */}
@@ -199,10 +207,9 @@ const styles = StyleSheet.create({
     width:150,
     height:150,
     justifyContent:"center",
-    alignSelf:"center",
     marginTop:-50,
-    alignItems:"center",
     borderRadius:100,
+    flexDirection:"row"
   },
   containerUserName:{
     backgroundColor:"#161616",
@@ -263,7 +270,7 @@ containerUserHeader:{
   borderRadius:60
 },
 buttomEdit:{
-  marginTop:10,
+  marginTop:20,
   backgroundColor:'#121212',
   padding:15,
   borderRadius:20,
@@ -309,7 +316,22 @@ textButtonCalculator: {
   fontSize: 20,
   color: "#ffffff",
 },
-scroll:{
-  height:'100%'
+textButtomEditImg:{
+  color:"white",
+  fontSize:16,
+},
+containerButtomEditImg:{
+  backgroundColor:"#0d1117",
+  zIndex:1,
+  borderRadius:10,
+  alignSelf:"center",
+  justifyContent:"center",
+  width:70,
+  height:30,
+  marginLeft:-150,
+  marginTop:-50,
+  flexDirection:"row",
+  alignItems:"center",
+  display:"flex"
 }
 })
