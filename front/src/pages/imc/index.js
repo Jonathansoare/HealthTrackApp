@@ -28,6 +28,7 @@ export default function Imc() {
     setRefresh(true)
     setIsLoading(true)
     buscarImc(id)
+    buscarPeso(id)
     setTimeout(() => {
       setIsLoading(false)
       setRefresh(false)
@@ -104,6 +105,21 @@ function formatDate() {
     }
   }
 
+  async function buscarPeso(id){
+    const dados = await axios.get(`${api}/search/weight/${id}`)
+    .then((res) => {
+      let lista = res.data.result;
+      lista.sort((a,b) => b.id - a.id)
+      //console.log(lista[0].peso); pega o ultimo peso adicionado na tabala
+      if(lista){
+        setPeso(lista[0].peso)
+      console.log("LOG IMC: peso pego com sucesso.");
+      }
+    }).catch((e) => {
+      console.error("Erro:" + e)
+    })
+  }
+
   async function buscarImc(id){
     const dados = await axios.get(`${api}/search/imc/${id}`)
     .then((res) => {
@@ -120,6 +136,7 @@ function formatDate() {
   useEffect(() => {
     setIsLoading(true)
     buscarImc(id)
+    buscarPeso(id)
     setTimeout(() => {
       setIsLoading(false)
     }, 1000);
@@ -134,7 +151,7 @@ function formatDate() {
       <View style={styles.containerForm}>
           <Text style={styles.textForm}>Calcular Imc</Text>
           <Text style={styles.textSecund}>Peso atual</Text>
-          <TextInput style={styles.input} placeholder='Ex: 65.5' placeholderTextColor="white" keyboardType='number-pad' value={peso} onChangeText={setPeso}/>
+          <TextInput style={styles.input} placeholder='Ex: 65.5' placeholderTextColor="white" keyboardType='number-pad' value={peso} onChangeText={setPeso} defaultValue={!peso  ? "" : peso}/>
           {msg && <Text style={styles.mensagem}>{msg}</Text> || <Text style={styles.mensagemErro}>{msgErro}</Text>}
             
           <TouchableOpacity

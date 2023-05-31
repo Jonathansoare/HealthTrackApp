@@ -118,27 +118,8 @@ export default function Perfil() {
         </TouchableOpacity>
       </SafeAreaView>
     {/* --------------------------------- */}
-    <ScrollView 
-      horizontal={false} 
-      showsHorizontalScrollIndicator={false} 
-      refreshControl={
-        <RefreshControl 
-        refreshing={refresh}
-        onRefresh={() => Refresh()}
-        />
-      }
-      >
+
     <View style={styles.containerInfo}>
-    <ScrollView 
-      horizontal={false} 
-      showsHorizontalScrollIndicator={false} 
-      refreshControl={
-        <RefreshControl 
-        refreshing={refresh}
-        onRefresh={() => Refresh()}
-        />
-      }
-      />
      {/* FOTO DE PERFIL  */}
       <View style={styles.containerImgUser}>
           <TouchableOpacity onPress={() => handleImagePicker()} disabled={!editable}>
@@ -199,7 +180,7 @@ export default function Perfil() {
     </TouchableOpacity>
     {/* ------------------ */}
     </View>
-    </ScrollView>
+
    </SafeAreaView>
    </>
   );
@@ -334,4 +315,7 @@ textButtonCalculator: {
   fontSize: 20,
   color: "#ffffff",
 },
+scroll:{
+  height:'100%'
+}
 })
