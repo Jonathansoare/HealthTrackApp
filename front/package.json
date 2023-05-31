@@ -29,7 +29,9 @@
     "expo-app-loading": "^2.1.1",
     "expo-camera": "^13.2.1",
     "expo-font": "~11.1.1",
+    "expo-image-picker": "~14.1.1",
     "expo-status-bar": "~1.4.4",
+    "expo-system-ui": "~2.2.1",
     "react": "18.2.0",
     "react-datetime-picker": "^4.2.0",
     "react-dom": "18.2.0",
@@ -41,7 +43,8 @@
     "react-native-datepicker": "^1.7.2",
     "react-native-elements": "^3.4.3",
     "react-native-gesture-handler": "^2.9.0",
-    "react-native-image-picker": "^5.3.1",
+    "react-native-image-crop-picker": "^0.40.0",
+    "react-native-image-picker": "^5.4.0",
     "react-native-loading-spinner-overlay": "^3.0.1",
     "react-native-masked-text": "^1.13.0",
     "react-native-reanimated": "~2.14.4",
@@ -52,9 +55,7 @@
     "react-native-web": "~0.18.10",
     "victory": "^36.6.8",
     "victory-native": "^36.6.8",
-    "yup": "^1.0.2",
-    "expo-image-picker": "~14.1.1",
-    "expo-system-ui": "~2.2.1"
+    "yup": "^1.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

@@ -17,6 +17,7 @@ import TitleMain from '../../components/TitleMain';
 export default function Imc() {
   AsyncStorage.getItem('idUser').then((res) => setId(res));
   const [id,setId] = useState()
+  const [user,setUser] = useState()
   const [isLoading,setIsLoading] = useState(false)
   const [peso,setPeso] = useState()
   const [listImc,setListImc] = useState()
@@ -120,6 +121,18 @@ function formatDate() {
     })
   }
 
+  async function buscarUser(id){
+    const dados = await axios.get(`${Api}/search/${id}`)
+    .then((res) => {
+      const user = res.data.result[0]
+      if(user){
+        setUser(user)
+      }
+    }).catch((e) => {
+      console.error("Erro:" + e)
+    })
+  }
+
   async function buscarImc(id){
     const dados = await axios.get(`${api}/search/imc/${id}`)
     .then((res) => {
@@ -137,6 +150,7 @@ function formatDate() {
     setIsLoading(true)
     buscarImc(id)
     buscarPeso(id)
+    buscarUser(id)
     setTimeout(() => {
       setIsLoading(false)
     }, 1000);
@@ -146,12 +160,12 @@ function formatDate() {
    <>
     <Spinner visible={isLoading} size={50} textContent='Carregando...' color='white' textStyle={{color:"white"}}/>
       <SafeAreaView style={styles.container}>
-      <Header nameIcon="user" navigate="user"/>
+      <Header nameIcon="user" navigate="user" imagem={!user ? undefined : user.img}/>
       <TitleMain name="Imc"/>
       <View style={styles.containerForm}>
           <Text style={styles.textForm}>Calcular Imc</Text>
           <Text style={styles.textSecund}>Peso atual</Text>
-          <TextInput style={styles.input} placeholder='Ex: 65.5' placeholderTextColor="white" keyboardType='number-pad' value={peso} onChangeText={setPeso} defaultValue={!peso  ? "" : peso}/>
+          <TextInput style={styles.input} placeholder='Ex: 65.5' placeholderTextColor="white" keyboardType='number-pad' value={!peso ? '' : peso} onChangeText={setPeso} defaultValue={!peso  ? "" : peso}/>
           {msg && <Text style={styles.mensagem}>{msg}</Text> || <Text style={styles.mensagemErro}>{msgErro}</Text>}
             
           <TouchableOpacity

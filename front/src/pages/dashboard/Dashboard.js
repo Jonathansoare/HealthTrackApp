@@ -93,6 +93,18 @@ export default function Dashboard(){
     })
   }
 
+  async function buscarUser(id){
+    const dados = await axios.get(`${Api}/search/${id}`)
+    .then((res) => {
+      const user = res.data.result[0]
+      if(user){
+        setUser(user)
+      }
+    }).catch((e) => {
+      console.error("Erro:" + e)
+    })
+  }
+
   async function porcetagemPressao(id){
     AsyncStorage.getItem('idUser').then((res) => setId(res));
     const dados = await axios.get(`${Api}/search/pressure/${id}`)
@@ -140,6 +152,7 @@ export default function Dashboard(){
     await porcetagemPeso(id)
     await porcetagemPressao(id)
     await buscarImc(id)
+    await buscarUser(id)
   }
 
   function Refresh(){
@@ -153,7 +166,6 @@ export default function Dashboard(){
   }
 
   useEffect(() => {
-    AsyncStorage.getItem('idUser').then((res) => setId(res));
     setISLoading(true)
     buscarInfo(id)
     setTimeout(() => {
@@ -165,7 +177,7 @@ export default function Dashboard(){
       <>
       <Spinner visible={isLoading} size={50} textContent='Carregando...' color='white' textStyle={{color:"white"}}/>
       <SafeAreaView style={styles.main}>
-      <Header nameIcon="user" navigate="user"/>
+      <Header nameIcon="user" navigate="user" imagem={!user ? undefined : user.img}/>
           <TitleMain name="Dashboard"/>
           <ScrollView 
             style={styles.main}

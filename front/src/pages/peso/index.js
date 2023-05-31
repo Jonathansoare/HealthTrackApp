@@ -85,11 +85,12 @@ function Refresh(){
   }
 
   async function buscarUser(id){
-    const dados = await axios.get(`${api}/search/${id}`)
+    const dados = await axios.get(`${Api}/search/${id}`)
     .then((res) => {
-      setISLoading(true)
-      setUser(res.data.result[0]);
-      setISLoading(false)
+      const user = res.data.result[0]
+      if(user){
+        setUser(user)
+      }
     }).catch((e) => {
       console.error("Erro:" + e)
     })
@@ -111,6 +112,7 @@ function Refresh(){
   useEffect(() => {
     setISLoading(true)
     buscarPeso(id)
+    buscarUser(id)
     setTimeout(() => {
       setISLoading(false)
     }, 1000);
@@ -119,7 +121,7 @@ function Refresh(){
   <>
     <Spinner visible={isLoading} size={50} textContent='Carregando...' color='white' textStyle={{color:"white"}}/>
     <SafeAreaView style={styles.container}>
-    <Header nameIcon="user" navigate="user"/>
+    <Header nameIcon="user" navigate="user" imagem={!user ? undefined : user.img}/>
     <TitleMain name="Peso"/>
     <View style={styles.containerForm}>
         <Text style={styles.textForm}>Cadastra Peso</Text>

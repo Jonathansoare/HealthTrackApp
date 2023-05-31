@@ -12,7 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function Header(props) {
   AsyncStorage.getItem('idUser').then((res) => setId(res));
   const navigation = useNavigation()
-  const [image,setImage] = useState(null)
+  const imagem = props.imagem
   const [id,setId] = useState()
   const [fontsLoaded] = useFonts({
     Inter_100Thin
@@ -32,10 +32,6 @@ export default function Header(props) {
     })
   }
  
-  useEffect(() => {
-    buscarImg(id)
-  },[image,id]);
-
  return (
   <>
    <SafeAreaView style={styles.container}>
@@ -45,7 +41,7 @@ export default function Header(props) {
     </View>
 
     <TouchableOpacity style={styles.containerUser} onPress={() => toggleUser()}>
-     {!image ? <AntDesign name={props.nameIcon} size={24} color="white" /> : <Image source={{uri:image}} style={styles.imgUser}/>}
+     {!imagem ? <AntDesign name={props.nameIcon} size={24} color="white" /> : <Image source={{uri:imagem}} style={styles.imgUser}/>}
     </TouchableOpacity>
     </SafeAreaView>
    </>

@@ -1,7 +1,6 @@
 import React,{useEffect, useState} from 'react';
 import { View,Text, SafeAreaView,StyleSheet,ScrollView,TouchableOpacity,Image,TextInput,RefreshControl } from 'react-native';
-import Header from '../../components/Header/Header';
-import TitleMain from '../../components/TitleMain';
+
 import { AntDesign } from '@expo/vector-icons';
 
 import Heart from "../../image/Heart.png"
@@ -15,7 +14,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import * as ImagePicker from 'expo-image-picker';
 import Spinner from 'react-native-loading-spinner-overlay/lib';
-import { set } from 'react-hook-form';
 
 export default function Perfil() {
   AsyncStorage.getItem('UserId').then((res) => setId(res))
@@ -25,36 +23,43 @@ export default function Perfil() {
   const [name,setName] = useState()
   const [height,setHeight] = useState()
   const [email,setEmail] = useState()
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState();
   const [id,setId] = useState();
   const [isLoading,setISLoading] = useState(false)
   const [editable,setEditable] = useState(false)
   const [refresh,setRefresh] = useState()
 
   const handleImagePicker = async () => {
-    AsyncStorage.getItem('idUser').then((res) => setId(res));
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      aspect: [10, 10],
-      quality: 1,
-      base64:true
-    });
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      console.log('Permissão de acesso à biblioteca de mídia negada');
+      return;
+    }
 
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    quality: 1,
+    base64:true,
+
+  });
+  if (!result.canceled) {
+    const { assets } = result;
+    if (assets.length > 0) {
+      const { uri } = assets[0];
       const dados = await axios.post(`${api}/setImgUser/${id}`,{
-        img:result.assets[0].uri
+        img:uri
       }).then((res) => {
         setISLoading(true)
         console.log("imagem adicionada com sucesso!");
+        buscarImg(id)
         setISLoading(false)
       }).catch((erro) => {
         console.log("ERRO: " + erro);
       })
-      
     }
   }
+  };
+
   async function buscarImg(id){
     const dados = await axios.get(`${api}/search/img/${id}`)
     .then((res) => {
@@ -66,16 +71,6 @@ export default function Perfil() {
     .catch((erro) => {
       console.log(erro);
     })
-  }
-  function Refresh(){
-    setRefresh(true)
-    setISLoading(true)
-    buscarImg(id)
-    buscarUser(id)
-    setTimeout(() => {
-      setISLoading(false)
-      setRefresh(false)
-    }, 1000);
   }
 
   async function buscarUser(id){
@@ -95,7 +90,6 @@ export default function Perfil() {
 
   useEffect(() => {
     setISLoading(true)
-    buscarImg(id)
     buscarUser(id,token)
     setTimeout(() => {
       setISLoading(false)
@@ -123,7 +117,7 @@ export default function Perfil() {
      {/* FOTO DE PERFIL  */}
       <View style={styles.containerImgUser}>
           <TouchableOpacity onPress={() => handleImagePicker()} disabled={!editable}>
-          {!image ? <AntDesign name="adduser" size={60} color="white" /> : <Image source={{uri:image}} style={styles.imgUser}/>}
+          {!image ? <AntDesign name="adduser" size={60} color="white" /> : <Image source={{ uri: image }} style={styles.imgUser}/>}
           </TouchableOpacity>
       </View>
      {/* -------------------------- */}
