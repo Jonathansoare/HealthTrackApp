@@ -1,5 +1,5 @@
 import React,{useEffect, useState} from 'react';
-import { View,Text, SafeAreaView,StyleSheet,ScrollView,TouchableOpacity,Image,TextInput } from 'react-native';
+import { View,Text, SafeAreaView,StyleSheet,ScrollView,TouchableOpacity,Image,TextInput,RefreshControl } from 'react-native';
 import Header from '../../components/Header/Header';
 import TitleMain from '../../components/TitleMain';
 import { AntDesign } from '@expo/vector-icons';
@@ -29,6 +29,7 @@ export default function Perfil() {
   const [id,setId] = useState();
   const [isLoading,setISLoading] = useState(false)
   const [editable,setEditable] = useState(false)
+  const [refresh,setRefresh] = useState()
 
   const handleImagePicker = async () => {
     AsyncStorage.getItem('idUser').then((res) => setId(res));
@@ -57,21 +58,36 @@ export default function Perfil() {
   async function buscarImg(id){
     const dados = await axios.get(`${api}/search/img/${id}`)
     .then((res) => {
-        setImage(res.data.result[0].img)
+      const dados = res.data.result[0]
+      if(dados){
+        setImage(dados.img)
+      }
     })
     .catch((erro) => {
       console.log(erro);
     })
   }
+  function Refresh(){
+    setRefresh(true)
+    setISLoading(true)
+    buscarImg(id)
+    buscarUser(id)
+    setTimeout(() => {
+      setISLoading(false)
+      setRefresh(false)
+    }, 1000);
+  }
 
-  async function buscarUser(id,token){
-    const dados = await axios.get(`${api}/search/${id}`, {
-      headers:{ Authorization: `Bearer ${token}`,}
-    })
+  async function buscarUser(id){
+    const dados = await axios.get(`${api}/search/${id}`)
     .then((res) => {
-      setName(res.data.result[0].name)
-      setEmail(res.data.result[0].email)
-      setHeight(res.data.result[0].altura)
+      const user = res.data.result[0]
+      if(user){
+        setName(user.name)
+        setEmail(user.email)
+        setHeight(user.altura)
+        setImage(user.img)
+      }
     }).catch((e) => {
       console.error("Erro:" + e)
     })
@@ -86,10 +102,9 @@ export default function Perfil() {
     }, 2000);
   },[id]);
 
-
  return (
    <>
-   <Spinner visible={isLoading}/>
+   <Spinner visible={isLoading} size={50} textContent='Carregando...' color='white' textStyle={{color:"white"}}/>
    <SafeAreaView style={styles.container}>
 
     {/* Header */}
@@ -103,8 +118,27 @@ export default function Perfil() {
         </TouchableOpacity>
       </SafeAreaView>
     {/* --------------------------------- */}
-
+    <ScrollView 
+      horizontal={false} 
+      showsHorizontalScrollIndicator={false} 
+      refreshControl={
+        <RefreshControl 
+        refreshing={refresh}
+        onRefresh={() => Refresh()}
+        />
+      }
+      >
     <View style={styles.containerInfo}>
+    <ScrollView 
+      horizontal={false} 
+      showsHorizontalScrollIndicator={false} 
+      refreshControl={
+        <RefreshControl 
+        refreshing={refresh}
+        onRefresh={() => Refresh()}
+        />
+      }
+      />
      {/* FOTO DE PERFIL  */}
       <View style={styles.containerImgUser}>
           <TouchableOpacity onPress={() => handleImagePicker()} disabled={!editable}>
@@ -112,13 +146,13 @@ export default function Perfil() {
           </TouchableOpacity>
       </View>
      {/* -------------------------- */}
-    
+
     {/* BUTAO DE EDITAR PERFIL */}
     <TouchableOpacity style={styles.buttomEdit} onPress={() => {if(editable === false){ setEditable(true)} else{setEditable(false)}}}>
       <Text style={styles.textButtomEdit}>Editar perfil</Text>
     </TouchableOpacity>
     {/* ---------------- */}
-    
+
     {/* CONTAINER FORM */}
     <View style={styles.containerForm}>
       {/* INPUT NOME */}
@@ -145,7 +179,6 @@ export default function Perfil() {
     </View>
     {/* ---------------------------- */}
 
-
     {/*  BOTAO DE SALVA*/}
     <TouchableOpacity
       style={editable === true ? styles.buttonCalculator : {
@@ -166,6 +199,7 @@ export default function Perfil() {
     </TouchableOpacity>
     {/* ------------------ */}
     </View>
+    </ScrollView>
    </SafeAreaView>
    </>
   );
