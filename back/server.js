@@ -104,7 +104,7 @@ app.post('/login', async (req,res) =>{
     })
 });
 
-app.get('/search/:id', eAdmin, async (req,res) => {
+app.get('/search/:id', async (req,res) => {
     const id = req.params
     const user =  await User.findAll({
         attributes:["name","email","id","altura","password","img"],

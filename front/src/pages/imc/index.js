@@ -127,7 +127,7 @@ function formatDate() {
 
  return (
    <>
-    <Spinner visible={isLoading}/>
+    <Spinner visible={isLoading} size={50} textContent='Carregando...' color='white' textStyle={{color:"white"}}/>
       <SafeAreaView style={styles.container}>
       <Header nameIcon="user" navigate="user"/>
       <TitleMain name="Imc"/>
