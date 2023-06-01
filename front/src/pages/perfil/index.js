@@ -118,7 +118,7 @@ export default function Perfil() {
     <View style={styles.containerInfo}>
      {/* FOTO DE PERFIL  */}
       <View style={styles.containerImgUser}>
-        <TouchableOpacity onPress={() => {!image ? handleImagePicker() : true }} disabled={!editable}>
+        <TouchableOpacity onPress={() => {!image ? handleImagePicker() : true }} disabled={!editable && !image ? false : true}>
           {!image ? <AntDesign name="adduser" size={60} color="white" /> : <Image source={{ uri: image }} style={styles.imgUser}/>}
 
           <TouchableOpacity style={!editable ? {display:"none"}: styles.containerButtomEditImg && !image ? {display:"none"} : styles.containerButtomEditImg} onPress={() => handleImagePicker()} disabled={!editable}>
