@@ -49,6 +49,7 @@ function Refresh(){
   setRefresh(true)
   setISLoading(true)
   buscarPeso(id)
+  buscarUser(id)
   setTimeout(() => {
     setISLoading(false)
     setRefresh(false)

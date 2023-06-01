@@ -20,7 +20,7 @@ export default function Imc() {
   const [user,setUser] = useState()
   const [isLoading,setIsLoading] = useState(false)
   const [peso,setPeso] = useState()
-  const [listImc,setListImc] = useState()
+  const [listImc,setListImc] = useState(null)
   const [msg,setMsg] = useState()
   const [msgErro,setMsgErro] = useState()
   const [refresh,setRefresh] = useState()
@@ -30,6 +30,7 @@ export default function Imc() {
     setIsLoading(true)
     buscarImc(id)
     buscarPeso(id)
+    buscarUser(id)
     setTimeout(() => {
       setIsLoading(false)
       setRefresh(false)
@@ -112,9 +113,13 @@ function formatDate() {
       let lista = res.data.result;
       lista.sort((a,b) => b.id - a.id)
       //console.log(lista[0].peso); pega o ultimo peso adicionado na tabala
-      if(lista){
+      const dados = lista[0]
+      if(dados){
         setPeso(lista[0].peso)
-      console.log("LOG IMC: peso pego com sucesso.");
+        console.log("LOG IMC: peso pego com sucesso.");
+      }
+      else{
+        console.log("nao tem peso");        
       }
     }).catch((e) => {
       console.error("Erro:" + e)

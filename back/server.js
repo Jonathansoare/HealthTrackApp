@@ -282,4 +282,28 @@ app.get('/search/imc/:id',async (req,res) => {
         })
     })
 });
+
+app.put('/uptade/user/:id', async (req,res) => {
+    const { id } = req.params;
+    const { nome, email, altura,foto } = req.body;
+  
+    try {
+      const usuario = await User.findByPk(id);
+      if (!usuario) {
+        return res.status(404).json({ error: 'Usuário não encontrado' });
+      }
+  
+      usuario.name = nome
+      usuario.email = email
+      usuario.altura = altura
+      usuario.img = foto
+      await usuario.save();
+  
+      console.log('Dados atualizados com sucesso!');
+      res.json({ message: 'Dados atualizados com sucesso'});
+    } catch (error) {
+      console.error('Erro ao atualizar os dados:', error);
+      res.status(500).json({ error: 'Erro ao atualizar os dados' });
+    }
+})
 app.listen(3001,'192.168.0.8', ()=>{console.log("Serve rodando na porta 3001.")})

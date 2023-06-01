@@ -29,7 +29,7 @@ export default function Perfil() {
   const [id,setId] = useState();
   const [isLoading,setISLoading] = useState(false)
   const [editable,setEditable] = useState(false)
-  const [refresh,setRefresh] = useState()
+  const [msg,setMsg] = useState()
 
   const handleImagePicker = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -73,6 +73,24 @@ export default function Perfil() {
     .catch((erro) => {
       console.log(erro);
     })
+  }
+
+  async function AtualizaDados(id){
+    const respose = await axios.put(`${api}/uptade/user/${id}`,{
+      nome:name,
+      email:email,
+      altura:height,
+      foto:image
+    }).then((res) => {
+      setISLoading(true)
+      setMsg("Perfil atualizado com sucesso")
+      buscarUser(id)
+      setISLoading(false)
+      setTimeout(() => {
+        setMsg()
+      }, 1500);
+    })
+    .catch((e) => console.error(e))
   }
 
   async function buscarUser(id){
@@ -131,7 +149,7 @@ export default function Perfil() {
      {/* -------------------------- */}
 
     {/* BUTAO DE EDITAR PERFIL */}
-    <TouchableOpacity style={styles.buttomEdit} onPress={() => {if(editable === false){ setEditable(true)} else{setEditable(false)}}} disabled={editable}>
+    <TouchableOpacity style={styles.buttomEdit} onPress={() => {if(editable === false){ setEditable(true)} else{setEditable(false)}}} >
       <Text style={styles.textButtomEdit}>Editar perfil</Text>
     </TouchableOpacity>
     {/* ---------------- */}
@@ -162,9 +180,13 @@ export default function Perfil() {
     </View>
     {/* ---------------------------- */}
 
+    {/* Mensagem */}
+    <Text style={styles.msg}>{msg}</Text>
+    {/* ---------------------- */}
+
     {/*  BOTAO DE SALVA*/}
     <TouchableOpacity
-      style={editable === true ? styles.buttonCalculator : {
+      style={editable === true ? styles.buttonSave : {
         borderRadius: 50,
         alignItems: "center",
         justifyContent: "center",
@@ -173,12 +195,12 @@ export default function Perfil() {
         paddingTop: 14,
         paddingBottom: 14,
         marginLeft: 12,
-        marginTop: 50,
+        marginTop: 20,
         opacity:0.5
      }}
-      onPress={() => {console.log("salvou"), setEditable(false)}} 
+      onPress={() => {AtualizaDados(id), setEditable(false)}} 
       disabled={!editable}>
-      <Text style={styles.textButtonCalculator}>Salvar</Text>
+      <Text style={styles.textButtonSave}>Salvar</Text>
     </TouchableOpacity>
     {/* ------------------ */}
     </View>
@@ -303,7 +325,7 @@ containerForm:{
 containerInput:{
   marginTop:30
 },
-buttonCalculator: {
+buttonSave: {
   borderRadius: 50,
   alignItems: "center",
   justifyContent: "center",
@@ -312,9 +334,9 @@ buttonCalculator: {
   paddingTop: 14,
   paddingBottom: 14,
   marginLeft: 12,
-  marginTop: 50,
+  marginTop: 20,
 },
-textButtonCalculator: {
+textButtonSave: {
   fontSize: 20,
   color: "#ffffff",
 },
@@ -335,5 +357,11 @@ containerButtomEditImg:{
   flexDirection:"row",
   alignItems:"center",
   display:"flex"
+},
+msg:{
+  color:"green",
+  fontSize:20,
+  marginLeft:-150,
+  marginTop:10
 }
 })

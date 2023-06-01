@@ -37,6 +37,7 @@ export default function Pressao() {
   function Refresh(){
     setRefresh(true)
     buscarPressao(id)
+    buscarUser(id)
     setTimeout(() => {
       setISLoading(false)
       setRefresh(false)
