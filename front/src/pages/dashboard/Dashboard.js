@@ -29,12 +29,6 @@ export default function Dashboard(){
   const [indiceImc,setIndiceImc] = useState()
   const [isLoading,setISLoading] = useState(false)
   const [refresh,setRefresh] = useState()
-  const [fontsLoaded] = useFonts({
-    Roboto_400Regular,
-    Roboto_300Light_Italic,
-    Roboto_400Regular_Italic,
-    Roboto_100Thin_Italic,
-  }) 
 
   async function buscarPeso(id){
     AsyncStorage.getItem('idUser').then((res) => setId(res));
@@ -166,6 +160,7 @@ export default function Dashboard(){
   }
 
   useEffect(() => {
+    AsyncStorage.getItem('idUser').then((res) => setId(res));
     setISLoading(true)
     buscarInfo(id)
     setTimeout(() => {
@@ -178,7 +173,7 @@ export default function Dashboard(){
       <Spinner visible={isLoading} size={50} textContent='Carregando...' color='white' textStyle={{color:"white"}}/>
       <SafeAreaView style={styles.main}>
       <Header nameIcon="user" navigate="user" imagem={!user ? undefined : user.img}/>
-          <TitleMain name="Dashboard"/>
+      <TitleMain name="Dashboard"/>
           <ScrollView 
             style={styles.main}
             horizontal={false} 
