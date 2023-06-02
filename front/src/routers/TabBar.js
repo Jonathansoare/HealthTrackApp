@@ -94,7 +94,6 @@ const Tab = createBottomTabNavigator()
                 <Tab.Screen
                  name="Atividade" 
                  component={Atividade} 
-                 headerShown={true}
                  options={{
                  tabBarIcon:({ color, size, focused }) => {
                     if(focused){
