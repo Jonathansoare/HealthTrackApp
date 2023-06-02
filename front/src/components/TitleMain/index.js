@@ -1,12 +1,18 @@
 import React from 'react';
 import { View,Text,StyleSheet } from 'react-native';
-import {useFonts,Roboto_100Thin_Italic,Roboto_400Regular} from "@expo-google-fonts/roboto"
+import {useFonts,Roboto_400Regular,
+  Roboto_300Light_Italic,
+  Roboto_400Regular_Italic,
+  Roboto_100Thin_Italic,
+} from "@expo-google-fonts/roboto"
 
 export default function TitleMain(props) {
-    const [fontsLoaded] = useFonts({
-        Roboto_100Thin_Italic,
-        Roboto_400Regular
-      }) 
+  const [fontsLoaded] = useFonts({
+    Roboto_400Regular,
+    Roboto_300Light_Italic,
+    Roboto_400Regular_Italic,
+    Roboto_100Thin_Italic,
+  })
  return (
    <View>
     <Text style={style.text}>{props.name}</Text>
