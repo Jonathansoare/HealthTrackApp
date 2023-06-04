@@ -242,7 +242,7 @@ export default function Dashboard(){
               
             <CardInfo 
               title="Atividade" 
-              value={atividade === '' ? "sem atividade" : atividade} 
+              value={atividade === undefined ? "sem atividade" : atividade} 
               StyleIcon={stylesAtividade.icons}
               iconNameTitle={"running"}
               iconSizeTitle={30}

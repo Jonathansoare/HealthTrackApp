@@ -37,12 +37,7 @@ export default function Peso() {
     const dia = date.getDate()
     const ano = date.getFullYear()
     const mesFormt = ''
-    if(mes <= 9){
-     return (`${dia}/${'0' + mes}/${ano}`);
-    }
-    if(dia <= 9){
-      return (`${'0' + dia}/${mes}/${ano}`);
-    }
+    return (`${dia <= 9 ? '0' + dia : dia}/${mes <= 9 ? '0' + mes : mes}/${ano}`)
   }
 
 function Refresh(){
