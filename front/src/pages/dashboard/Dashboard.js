@@ -29,6 +29,8 @@ export default function Dashboard(){
   const [indiceImc,setIndiceImc] = useState()
   const [isLoading,setISLoading] = useState(false)
   const [refresh,setRefresh] = useState()
+  const [atividade,setAtividade] = useState()
+  const [dataAtividade,setDataAtividade] = useState()
 
   async function buscarPeso(id){
     AsyncStorage.getItem('idUser').then((res) => setId(res));
@@ -140,6 +142,20 @@ export default function Dashboard(){
     })
   };
 
+  async function buscaAtividade(id){
+    const dados = await axios.get(`${Api}/search/atividade/${id}`)
+    .then((res) => {
+      let lista = res.data.result;
+      lista.sort((a,b) => b.id - a.id)
+      //console.log(lista[0].peso); pega o ultimo peso adicionado na tabala
+      setAtividade(lista[0].Atividade)
+      setDataAtividade(lista[0].data_age)
+      console.log("LOG Atividade: Atividade pego com sucesso.");
+    }).catch((e) => {
+      console.error("Erro:" + e)
+    })
+  }
+
   async function buscarInfo(id){
     await buscarPeso(id)
     await buscarPressao(id)
@@ -147,6 +163,7 @@ export default function Dashboard(){
     await porcetagemPressao(id)
     await buscarImc(id)
     await buscarUser(id)
+    await buscaAtividade(id)
   }
 
   function Refresh(){
@@ -225,15 +242,13 @@ export default function Dashboard(){
               
             <CardInfo 
               title="Atividade" 
-              value="24.3" 
+              value={atividade === '' ? "sem atividade" : atividade} 
               StyleIcon={stylesAtividade.icons}
               iconNameTitle={"running"}
               iconSizeTitle={30}
               iconColorTitle={"#ff5722"}
-              iconNamePocentagem={"up"}
-              iconSizePocentagem={26}
-              iconColorPocentagem={'green'}
-              pocentagem={"3%"}/>
+              colorPocentagem={"white"}
+              pocentagem={dataAtividade === '' ? " " : dataAtividade}/>
           </View>
         </ScrollView>
       </SafeAreaView>      

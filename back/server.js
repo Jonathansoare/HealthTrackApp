@@ -10,6 +10,7 @@ const User = require('./models/User');
 const Peso = require('./models/Peso')
 const Pressao = require('./models/Pressao');
 const Imc = require("./models/Imc");
+const Atividade = require("./models/Atividade")
 
 const app = express()
 app.use(cors())
@@ -306,4 +307,42 @@ app.put('/uptade/user/:id', async (req,res) => {
       res.status(500).json({ error: 'Erro ao atualizar os dados' });
     }
 })
+
+app.post('/cadastrarAtividade', async (req,res) => {
+    let dados = req.body
+
+    await Atividade.create(dados)
+    .then(() => {
+        return res.json({
+            erro:false,
+            messagem:"Atividade cadastrada com sucesso!",
+        })
+    })
+    .catch(() => {
+        return res.status(400).json({
+            erro:true,
+            messagem:"ERROR: Atividade nao cadastrada!"
+        })
+    })
+    return
+})
+app.get('/search/atividade/:id',async (req,res) => {
+    const id = req.params;
+    await Atividade.findAll({
+        attributes:["Atividade","data_age","id","idUser","time"],
+        where:{
+            idUser:id.id
+        }
+    }).then((result) =>{
+        return res.json({
+            erro:false,
+            result
+        })
+    }).catch(() => {
+        return res.json({
+            erro:true,
+            messagem:"Atividade do usuario nao encontrado!"
+        })
+    })
+});
 app.listen(3001,'192.168.0.8', ()=>{console.log("Serve rodando na porta 3001.")})

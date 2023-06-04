@@ -1,41 +1,120 @@
-import React,{useState} from 'react';
-import { View,Text,StyleSheet,SafeAreaView, TextInput, ScrollView,TouchableOpacity,FlatList,RefreshControl } from 'react-native';
+import React,{useState,useEffect} from 'react';
+import { View,Text,StyleSheet,SafeAreaView, TextInput,TouchableOpacity,FlatList,RefreshControl } from 'react-native';
 import Header from '../../components/Header/Header';
 import TitleMain from '../../components/TitleMain';
 import { TextInputMask } from "react-native-masked-text";
 import TextHistory from '../../components/TextHistory';
+import axios from 'axios';
+import api from "../../assets/api/index";
+import Spinner from 'react-native-loading-spinner-overlay/lib';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Atividade() {
-  const lista = [
-      {atividade:"futebol", data:"01/05/23"},
-      {atividade:"corrida", data:"24/01/23"},
-      {atividade:"caminhada", data:"27/09/23"},
-      {atividade:"futebol", data:"21/11/23"},
-      {atividade:"corrida", data:"01/05/23"},
-      {atividade:"caminhada", data:"02/05/23"},
-      {atividade:"futebol", data:"03/05/23"},
-      {atividade:"corrida", data:"04/05/23"},
-      {atividade:"caminhada", data:"05/05/23"},
-  ]
+  AsyncStorage.getItem('idUser').then((res) => setId(res));
+  const [user,setUser] = useState()
+  const [id, setId] = useState(undefined)
+  const [atividade,setAtividade] = useState()
   const [time, setTime] = useState(); 
-  const [listActive,setListActive] = useState(lista)
+  const [listActive,setListActive] = useState()
   const [refresh,setRefresh] = useState(false)
+  const [msg,setMsg] = useState()
+  const [msgErro,setMsgErro] = useState()
+  const [isLoading,setISLoading] = useState(false)
 
   function Refresh(){
-    console.log("rodei");
+    buscaAtividade(id)
+    buscarUser(id)
   }
+  function formatDate() {
+    const date = new Date()
+    const mes = date.getMonth() + 1
+    const dia = date.getDate()
+    const ano = date.getFullYear()
+    const mesFormt = ''
+    if(mes <= 9){
+     return (`${dia}/${'0' + mes}/${ano}`);
+    }
+    if(dia <= 9){
+      return (`${'0' + dia}/${mes}/${ano}`);
+    }
+  }
+  async function buscarUser(id){
+    const dados = await axios.get(`${api}/search/${id}`)
+    .then((res) => {
+      const user = res.data.result[0]
+      if(user){
+        setUser(user)
+      }
+    }).catch((e) => {
+      console.error("Erro:" + e)
+    })
+  }
+
+  async function buscaAtividade(id){
+    const dados = await axios.get(`${api}/search/atividade/${id}`)
+    .then((res) => {
+      let lista = res.data.result;
+      lista.sort((a,b) => b.id - a.id)
+      //console.log(lista[0].peso); pega o ultimo peso adicionado na tabala
+      setListActive(lista)
+      console.log("LOG Atividade: Atividade pego com sucesso.");
+    }).catch((e) => {
+      console.error("Erro:" + e)
+    })
+  }
+
+  function cadastraAtividade(){
+    if(atividade === undefined || atividade === ' ' || time === undefined || time === ' '){
+      setMsgErro("Campo vazio.")
+      setTimeout(() => {
+        setMsgErro()
+      }, 5000);
+    }
+    else{
+      setISLoading(true)
+      const data = formatDate()
+      axios.post(`${api}/cadastrarAtividade`, {
+        atividade:atividade,
+        data_age:data,
+        idUser:id,
+        time:time
+      })
+      .then(() => {
+        setISLoading(false)
+        setMsg("Atividade cadastrada com sucesso.")
+        buscaAtividade(id)
+        setTimeout(() => {
+          setMsg()
+        }, 1500);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+    }
+  }
+
+  useEffect(() => {
+    setISLoading(true)
+    buscaAtividade(id)
+    buscarUser(id)
+    setTimeout(() => {
+      setISLoading(false)
+    }, 1500);
+  },[id])
 
  return (
   <>
+   <Spinner visible={isLoading} size={50} textContent='Carregando...' color='white' textStyle={{color:"white"}}/>
    <SafeAreaView style={styles.container}>
-    <Header nameIcon="user" navigate="user"/>
+   <Header nameIcon="user" navigate="user" imagem={!user ? undefined : user.img}/>
     <TitleMain name="Atividade"/>
     <View style={styles.containerForm}>
       <Text style={styles.textForm}>Cadastrar atividade</Text>
       {/* View input atividade */}
       <View>
         <Text style={styles.labelInput}>Nome da atividade</Text>
-        <TextInput placeholder='Ex: Futebol' style={styles.input} placeholderTextColor="white"/>
+        <TextInput placeholder='Ex: Futebol' style={styles.input} placeholderTextColor="white" onChangeText={setAtividade} value={atividade}/>
       </View>
       {/* -------------------- */}
 
@@ -56,12 +135,12 @@ export default function Atividade() {
             />
       </View>
       {/* --------------------- */}
-
+      {msg && <Text style={styles.mensagem}>{msg}</Text> || <Text style={styles.mensagemErro}>{msgErro}</Text>}
       {/* View buttom */}
       <View>
         <TouchableOpacity
             style={styles.buttonCadastro}
-            onPress={() => console.log("cadastrado")}>
+            onPress={() => cadastraAtividade()}>
             <Text style={styles.textButtonCadastro}>Cadastrar</Text>
         </TouchableOpacity>
       </View>
@@ -70,7 +149,7 @@ export default function Atividade() {
     {/* View historico */}
     <View style={styles.containerHistory}>
       <Text style={styles.textHistory}>Historico</Text>
-      <FlatList data={listActive} renderItem={({item}) => <TextHistory colorIcon="#ff5722" peso={item.atividade} icon="walk" date={item.data}></TextHistory>} 
+      <FlatList data={listActive} renderItem={({item}) => <TextHistory colorIcon="#ff5722" peso={item.Atividade} icon="walk" date={item.time}></TextHistory>} 
       refreshControl={
         <RefreshControl 
         refreshing={refresh}
@@ -167,4 +246,16 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "#ffffff",
   },
+  mensagem:{
+    color:"green",
+    paddingLeft:20,
+    fontSize:16,
+    marginTop:10,
+  },
+  mensagemErro:{
+    color:"red",
+    paddingLeft:20,
+    fontSize:16,
+    marginTop:10,
+  }
 })
