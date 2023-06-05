@@ -11,6 +11,7 @@ const Peso = require('./models/Peso')
 const Pressao = require('./models/Pressao');
 const Imc = require("./models/Imc");
 const Atividade = require("./models/Atividade")
+const Alimento = require("./models/Alimento")
 
 const app = express()
 app.use(cors())
@@ -345,4 +346,42 @@ app.get('/search/atividade/:id',async (req,res) => {
         })
     })
 });
+
+app.post('/cadastrarAlimento', async (req,res) => {
+    let dados = req.body
+
+    await Alimento.create(dados)
+    .then(() => {
+        return res.json({
+            erro:false,
+            messagem:"Alimento cadastrada com sucesso!",
+        })
+    })
+    .catch(() => {
+        return res.status(400).json({
+            erro:true,
+            messagem:"ERROR: Alimento nao cadastrado!"
+        })
+    })
+    return
+})
+app.get('/search/alimento/:id', async (req,res) => {
+    const id = req.params;
+    await Alimento.findAll({
+        attributes:["alimento","data_age","id","idUser","calorias"],
+        where:{
+            idUser:id.id
+        }
+    }).then((result) =>{
+        return res.json({
+            erro:false,
+            result
+        })
+    }).catch(() => {
+        return res.json({
+            erro:true,
+            messagem:"Alimento do usuario nao encontrado!"
+        })
+    })
+})
 app.listen(3001,'192.168.0.8', ()=>{console.log("Serve rodando na porta 3001.")})
