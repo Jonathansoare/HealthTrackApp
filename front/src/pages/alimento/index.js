@@ -23,8 +23,12 @@ export default function Atividade() {
   const [isLoading,setISLoading] = useState(false)
 
   function Refresh(){
+    setISLoading(true)
     buscaAlimento(id)
     buscarUser(id)
+    setTimeout(() => {
+      setISLoading(false)
+    }, 1000);
   }
   function formatDate() {
     const date = new Date()

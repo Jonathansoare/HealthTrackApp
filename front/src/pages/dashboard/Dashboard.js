@@ -9,12 +9,6 @@ import axios from 'axios';
 import Api from "../../assets/api/index"
 
 import Spinner from 'react-native-loading-spinner-overlay/lib'
-
-import {useFonts,Roboto_400Regular,
-  Roboto_300Light_Italic,
-  Roboto_400Regular_Italic,
-  Roboto_100Thin_Italic,
-} from "@expo-google-fonts/roboto"
 import TitleMain from '../../components/TitleMain';
 
 export default function Dashboard(){
@@ -136,7 +130,6 @@ export default function Dashboard(){
         setImc(lista[0].imc)
         setIndiceImc(lista[0].categoria)
       }
-      console.log("LOG IMC: imc pego com sucesso.");
     }).catch((e) => {
       console.error("Erro:" + e)
     })
@@ -148,9 +141,14 @@ export default function Dashboard(){
       let lista = res.data.result;
       lista.sort((a,b) => b.id - a.id)
       //console.log(lista[0].peso); pega o ultimo peso adicionado na tabala
-      setAtividade(lista[0].Atividade)
-      setDataAtividade(lista[0].data_age)
-      console.log("LOG Atividade: Atividade pego com sucesso.");
+      if(lista[0] === undefined){
+        setAtividade(undefined)
+        setDataAtividade(undefined)
+      }
+      else{
+        setAtividade(lista[0].Atividade)
+        setDataAtividade(lista[0].data_age)
+      }
     }).catch((e) => {
       console.error("Erro:" + e)
     })
