@@ -45,6 +45,24 @@ app.get('/', eAdmin, async (req,res) => {
 
     
 });
+app.get('/validationToken', eAdmin,async (req,res) => {
+    await User.findAll({
+        attributes:['id','name','email',],
+        order:[['id','DESC']],
+    }).then((users) =>{
+        res.status(200)
+        return res.json({
+            erro:false,
+            users,
+            id_usuario_logado:req.userId
+        })
+    }).catch(() => {
+        return res.json({
+            erro:true,
+            messagem:"Usuario nao encontrado!"
+        })
+    })
+})
 
 app.post('/cadastrar', async (req,res) =>{
     let dados = req.body
