@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import react,{ useState,useEffect, useContext } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, set, useForm } from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup"
 import * as yup from "yup"
 import { Text,TextInput,View,TouchableOpacity,Vibration,Pressable,Keyboard, TouchableWithoutFeedback} from "react-native";
@@ -10,6 +10,7 @@ import Api from "../../assets/api/index"
 import Spinner from "react-native-loading-spinner-overlay/lib";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import api from "../../assets/api/index";
 
 const schema = yup.object({
     email: yup.string().email("Email Invalido").required("Informe seu email"),
@@ -21,11 +22,13 @@ export default function FormLogin(){
     const { control, handleSubmit, formState: { errors }} = useForm({
         resolver: yupResolver(schema)
     })
+    AsyncStorage.getItem('UserToken').then((res) => setToken(res))
     const [error,setError] = useState(null)
     const navigation = useNavigation()
     const [isLoading, setIsLoading] = useState(false)
     const[check,setIsCheck] = useState(true)
     const [IconName, setIconName] = useState('')
+    const [token,setToken] = useState()
 
     function handleSingIn(data){
         userValidation(data)
@@ -74,10 +77,25 @@ export default function FormLogin(){
         
     }
 
+    function validationToken(token){
+        setIsLoading(true)
+        Axios.get(`${api}/validationToken`,{
+            headers: { 'Authorization': `Bearer ${token}`}
+        }).then((res) => {
+            navigation.navigate("TabBarRoute")
+            setIsLoading(false)
+        }).catch((e) => 
+        console.log("ERRO: ",e),setIsLoading(false))
+    }
+
+    useEffect(() => {
+        if(token){validationToken(token)}
+    },[token])
+
     return(
         <Pressable onPress={Keyboard.dismiss} style={styles.formContext}>
             <View style={styles.form}>
-                <Spinner visible={isLoading}/>
+            <Spinner visible={isLoading} size={50} textContent='Carregando...' color='white' textStyle={{color:"white"}}/>
                 <Text style={styles.formLabel}>Email</Text>
                 <Controller 
                     control={control}
